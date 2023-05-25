@@ -2,9 +2,9 @@ import random, string, time
 from collections import defaultdict
 from functools import cache
 
-possibleWords = ["able","acid","ache","acts","aged","ahoy","airy","ajar","akin","alas","ally","alms","also","amid","ammo","amok","ants","aqua","arch","area","army","arts","atom","aunt","avid","away","axes","axis","baby","back","bake","bald","balm","band","bank","bare","bark","base","bash","bath","beak","beam","bean","bear","beat","beef","beer","bees","belt",'word', 'list', 'four', 'play', 'game', 'code', 'time', 'tree', 'park', 'work', 'city', 'book', 'love', 'mind', 'rock', 'team', 'song', 'idea', 'zone', 'baby', 'girl', 'hero', 'data', 'home', 'land', 'help', 'rain', 'road', 'baby', 'ship', 'east', 'west', 'moon', 'fire', 'fish', 'lake', 'sand', 'bird', 'door', 'face', 'hand', 'milk', 'mind', 'star', 'baby', 'idea', 'test', 'trip', 'year', 'cool', 'crap', 'aba', 'aca', 'ada', 'aea']
+# possibleWords = ["able","acid","ache","acts","aged","ahoy","airy","ajar","akin","alas","ally","alms","also","amid","ammo","amok","ants","aqua","arch","area","army","arts","atom","aunt","avid","away","axes","axis","baby","back","bake","bald","balm","band","bank","bare","bark","base","bash","bath","beak","beam","bean","bear","beat","beef","beer","bees","belt",'word', 'list', 'four', 'play', 'game', 'code', 'time', 'tree', 'park', 'work', 'city', 'book', 'love', 'mind', 'rock', 'team', 'song', 'idea', 'zone', 'baby', 'girl', 'hero', 'data', 'home', 'land', 'help', 'rain', 'road', 'baby', 'ship', 'east', 'west', 'moon', 'fire', 'fish', 'lake', 'sand', 'bird', 'door', 'face', 'hand', 'milk', 'mind', 'star', 'baby', 'idea', 'test', 'trip', 'year', 'cool', 'crap', 'aba', 'aca', 'ada', 'aea']
 
-n = len( possibleWords )
+# possibleWords = ["the","of","and","a","to","in","is","you","that","it","he","was","for","on","are","as","with","his","they","I","at","be","this","have","from","or","one","had","by","word","but","not","what","all","were","we","when","your","can","said","there","use","an","each","which","she","do","how","their","if","will","up","other","about","out","many","then","them","these","so","some","her","would","make","like","him","into","time","has","look","two","more","write","go","see","number","no","way","could","people","my","than","first","water","been","call","who","oil","its","now","find","long","down","day","did","get","come","made","may","part"]
 
 class Solution :
     def createBoard( self, r, c ) :
@@ -75,21 +75,28 @@ class Solution :
                         break
         
         return wordsFoundCount
+    
+possibleWords = []
+with open("./Possible_Approaches/words.txt") as f:
+    for line in f:
+        possibleWords.append(line.strip())
+n = len( possibleWords )
 
 print()
 timeStart = time.time()
-rangeMin = 5
-rangeMax = 100
-repeatEach = 5
-for i in range( rangeMin, rangeMax ) :
+rangeMin = 1000
+rangeMax = 1000
+repeatEach = 1
+for i in range( rangeMin, rangeMax+1 ) :
     
     for _ in range( repeatEach ) :
         startT = time.time()
         
         S = Solution()
         S.createBoard( i, i )
-        # [ print( row ) for row in S.board ]
-        # print()
+        if i < 20 :
+            [ print( row ) for row in S.board ]
+            print()
         
         S.createLetterDict()
         # [ print( item ) for item in S.lettersDict.items() ]
@@ -98,8 +105,6 @@ for i in range( rangeMin, rangeMax ) :
         count = S.findWordsInBoggle( possibleWords )
         
         if count :
-            # [ print( row ) for row in S.board ]
-            # print()
             print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
 
-print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart} seconds')
+print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart:.5f} seconds')
