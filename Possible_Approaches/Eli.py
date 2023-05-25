@@ -65,6 +65,8 @@ class Solution :
             
             if not passed :
                 
+                b = False
+                
                 for pos in self.lettersDict[ word[ 0 ] ] :
                     
                     self.traveled = []
@@ -72,24 +74,57 @@ class Solution :
                     if self.DFS( pos[ 0 ], pos[ 1 ], word ) :
                         # print( f'Found: {word} @ {pos} with {self.traveled}' )
                         wordsFoundCount += 1
+                        b = True
                         break
+                
+                if not b : print( f'Not Found: {word}' )
         
         return wordsFoundCount
     
 possibleWords = []
+
 with open("./Possible_Approaches/words.txt") as f:
     for line in f:
         possibleWords.append(line.strip())
+
 n = len( possibleWords )
 
 print()
-timeStart = time.time()
-rangeMin = 1000
-rangeMax = 1000
-repeatEach = 1
-for i in range( rangeMin, rangeMax+1 ) :
+
+def from_N_to_M( rangeMin, rangeMax ) :
+    timeStart = time.time()
+    repeatEach = 1
+    for i in range( rangeMin, rangeMax+1 ) :
+        
+        for _ in range( repeatEach ) :
+            startT = time.time()
+            
+            S = Solution()
+            S.createBoard( i, i )
+            # [ print( row ) for row in S.board ]
+            # print()
+            
+            S.createLetterDict()
+            # [ print( item ) for item in S.lettersDict.items() ]
+            # print()
+            
+            count = S.findWordsInBoggle( possibleWords )
+            
+            if count :
+                print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
+
+    print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart:.5f} seconds')
+
+# from_N_to_M( 5, 100 )
+
+def gridSizes( sizes ) :
     
-    for _ in range( repeatEach ) :
+    timeStart = time.time()
+    
+    repeatEach = 1
+    
+    for i in sizes :
+        
         startT = time.time()
         
         S = Solution()
@@ -105,6 +140,50 @@ for i in range( rangeMin, rangeMax+1 ) :
         count = S.findWordsInBoggle( possibleWords )
         
         if count :
-            print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
+            print( f'For Board Size {i}x{i} with {i**2} spots\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
 
-print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart:.5f} seconds')
+# gridSizes( [ 10 ] )
+
+
+def test_case() :
+    
+    Words = [
+        'waited', 'wait', 'bin', 'devoid', 'el', 'lo', 'voter', 'hen', 'fled', 'forums', 'mired', 'pure', 'ewe', 'me', 'dug', 'wizard', 'zigs', 'quad', 'quay', 'and', 'yo', 'up', 'magic', 'pitny', 'ons', 'irks', 'tablets', 'lax', 'thee', 'pass', 'toon', 'jets', 'jive', 'corals',
+    ]
+    
+    Board = [
+        '   waited     c',
+        '   a    el h  o',
+        '  bin   voter r',
+        '   t    o  n  a',
+        '        i     l',
+        ' p   fled  jets',
+        ' u   o     i o ',
+        ' r mired   v op',
+        ' ewe u up  e na',
+        '  i  magic    s',
+        '  zigs  tablets',
+        'quad    n  a h ',
+        'u r     yo x e ',
+        'and      n   e ',
+        'yo    irks     '
+    ]
+    
+    S = Solution()
+    S.board = Board
+    S.rows = len( Board )-1
+    S.cols = len( Board[ 0 ] )-1
+    
+    S.createLetterDict()
+    
+    count = S.findWordsInBoggle( Words )
+    
+    assert count == len( Words ), 'Not All Words Found'
+    print( f'{count}/{len( Words )} Words Found')
+    print( f'Adding: xxxx')
+    
+    Words.append('xxxx')
+    assert count == len( Words )-1, 'Found Non Existent Word'
+    print( f'{count}/{len( Words )} Words Found')
+
+test_case()
