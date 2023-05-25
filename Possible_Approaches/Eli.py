@@ -1,5 +1,6 @@
 import random, string, time
 from collections import defaultdict
+from functools import cache
 
 possibleWords = ["able","acid","ache","acts","aged","ahoy","airy","ajar","akin","alas","ally","alms","also","amid","ammo","amok","ants","aqua","arch","area","army","arts","atom","aunt","avid","away","axes","axis","baby","back","bake","bald","balm","band","bank","bare","bark","base","bash","bath","beak","beam","bean","bear","beat","beef","beer","bees","belt",'word', 'list', 'four', 'play', 'game', 'code', 'time', 'tree', 'park', 'work', 'city', 'book', 'love', 'mind', 'rock', 'team', 'song', 'idea', 'zone', 'baby', 'girl', 'hero', 'data', 'home', 'land', 'help', 'rain', 'road', 'baby', 'ship', 'east', 'west', 'moon', 'fire', 'fish', 'lake', 'sand', 'bird', 'door', 'face', 'hand', 'milk', 'mind', 'star', 'baby', 'idea', 'test', 'trip', 'year', 'cool', 'crap']
 
@@ -18,64 +19,88 @@ class Solution :
             for j in range( len( self.board[ 0 ] ) ) :
                 letter = self.board[ i ][ j ]
                 self.lettersDict[ letter ].append( [ i, j ] )
-                
-    def findWordsInBoggle( self, words ) :
     
-        def DFS( pos, word ) :
-            r, c = pos
+    # @cache
+    def DFS( self, r, c, word ) :
+        
+        if [ r, c ] in self.traveled :
+            # print('CROSSOVER')
+            # print( self.traveled )
+            return 0
+        else :
+            self.traveled.append( [ r, c ] )
+        
+        if self.board[ r ][ c ] == word[ 0 ] :        
+            if len( word ) == 1 :
+                return 1
             
-            if self.board[ r ][ c ] == word[ 0 ] :        
-                if len( word ) == 1 :
-                    # print( f'\tFound')
-                    return 1
-                
-                # up
-                if r > 0 and DFS( [ r-1, c ], word[1:] ) : return 1
-                # down
-                if r < self.rows and DFS( [ r+1, c ], word[1:] ) : return 1
-                # left
-                if c > 0 and DFS( [ r, c-1 ], word[1:] ) : return 1
-                # right
-                if c < self.cols and DFS( [ r, c+1 ], word[1:] ) : return 1
-                
-                # upLeft
-                if ( r > 0 and c > 0 ) and DFS( [ r-1, c-1 ], word[1:] ) : return 1
-                # upRight
-                if ( r > 0 and c < self.cols ) and DFS( [ r-1, c+1 ], word[1:] ) : return 1
-                # downLeft
-                if ( r < self.rows and c > 0 ) and DFS( [ r+1, c-1 ], word[1:] ) : return 1
-                # downRight
-                if ( r < self.rows and c < self.cols ) and DFS( [ r+1, c+1 ], word[1:] ) : return 1
+            # up
+            if r > 0 and self.DFS( r-1, c, word[1:] ) : return 1
+            # down
+            if r < self.rows and self.DFS( r+1, c, word[1:] ) : return 1
+            # left
+            if c > 0 and self.DFS( r, c-1, word[1:] ) : return 1
+            # right
+            if c < self.cols and self.DFS( r, c+1, word[1:] ) : return 1
+            
+            # upLeft
+            if ( r > 0 and c > 0 ) and self.DFS( r-1, c-1, word[1:] ) : return 1
+            # upRight
+            if ( r > 0 and c < self.cols ) and self.DFS( r-1, c+1, word[1:] ) : return 1
+            # downLeft
+            if ( r < self.rows and c > 0 ) and self.DFS( r+1, c-1, word[1:] ) : return 1
+            # downRight
+            if ( r < self.rows and c < self.cols ) and self.DFS( r+1, c+1, word[1:] ) : return 1
 
-                return 0
-            
-            else :
-                return 0
+            return 0
+        
+        else :
+            return 0
+           
+    def findWordsInBoggle( self, words ) :     
      
         wordsFoundCount = 0
         for word in possibleWords :
-        
-            # print( f'word: {word}' )
-            
+                    
             passed = [ letter for letter in word if letter not in self.lettersDict ]
             
             if not passed :
                 
                 for pos in self.lettersDict[ word[ 0 ] ] :
                     
-                    if DFS( pos, word ) :
+                    self.traveled = []
+                    
+                    if self.DFS( pos[ 0 ], pos[ 1 ], word ) :
+                        # print( f'Found: {word} @ {pos} with {self.traveled}' )
                         wordsFoundCount += 1
                         break
         
         return wordsFoundCount
 
-for i in range( 5, 20 ) :
+print()
+timeStart = time.time()
+rangeMin = 5
+rangeMax = 100
+repeatEach = 5
+for i in range( rangeMin, rangeMax ) :
     
-    startT = time.time()
-    
-    S = Solution()
-    S.createBoard( i, i )
-    S.createLetterDict()
-    count = S.findWordsInBoggle( possibleWords )
-    
-    print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
+    for _ in range( repeatEach ) :
+        startT = time.time()
+        
+        S = Solution()
+        S.createBoard( i, i )
+        # [ print( row ) for row in S.board ]
+        # print()
+        
+        S.createLetterDict()
+        # [ print( item ) for item in S.lettersDict.items() ]
+        # print()
+        
+        count = S.findWordsInBoggle( possibleWords )
+        
+        if count :
+            # [ print( row ) for row in S.board ]
+            # print()
+            print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
+
+print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart} seconds')
