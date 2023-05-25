@@ -20,7 +20,6 @@ class Solution :
                 letter = self.board[ i ][ j ]
                 self.lettersDict[ letter ].append( [ i, j ] )
     
-    # @cache
     def DFS( self, r, c, word ) :
                 
         if [ r, c ] in self.traveled :
