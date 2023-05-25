@@ -2,7 +2,7 @@ import random, string, time
 from collections import defaultdict
 from functools import cache
 
-possibleWords = ["able","acid","ache","acts","aged","ahoy","airy","ajar","akin","alas","ally","alms","also","amid","ammo","amok","ants","aqua","arch","area","army","arts","atom","aunt","avid","away","axes","axis","baby","back","bake","bald","balm","band","bank","bare","bark","base","bash","bath","beak","beam","bean","bear","beat","beef","beer","bees","belt",'word', 'list', 'four', 'play', 'game', 'code', 'time', 'tree', 'park', 'work', 'city', 'book', 'love', 'mind', 'rock', 'team', 'song', 'idea', 'zone', 'baby', 'girl', 'hero', 'data', 'home', 'land', 'help', 'rain', 'road', 'baby', 'ship', 'east', 'west', 'moon', 'fire', 'fish', 'lake', 'sand', 'bird', 'door', 'face', 'hand', 'milk', 'mind', 'star', 'baby', 'idea', 'test', 'trip', 'year', 'cool', 'crap']
+possibleWords = ["able","acid","ache","acts","aged","ahoy","airy","ajar","akin","alas","ally","alms","also","amid","ammo","amok","ants","aqua","arch","area","army","arts","atom","aunt","avid","away","axes","axis","baby","back","bake","bald","balm","band","bank","bare","bark","base","bash","bath","beak","beam","bean","bear","beat","beef","beer","bees","belt",'word', 'list', 'four', 'play', 'game', 'code', 'time', 'tree', 'park', 'work', 'city', 'book', 'love', 'mind', 'rock', 'team', 'song', 'idea', 'zone', 'baby', 'girl', 'hero', 'data', 'home', 'land', 'help', 'rain', 'road', 'baby', 'ship', 'east', 'west', 'moon', 'fire', 'fish', 'lake', 'sand', 'bird', 'door', 'face', 'hand', 'milk', 'mind', 'star', 'baby', 'idea', 'test', 'trip', 'year', 'cool', 'crap', 'aba', 'aca', 'ada', 'aea']
 
 n = len( possibleWords )
 
@@ -22,10 +22,8 @@ class Solution :
     
     # @cache
     def DFS( self, r, c, word ) :
-        
+                
         if [ r, c ] in self.traveled :
-            # print('CROSSOVER')
-            # print( self.traveled )
             return 0
         else :
             self.traveled.append( [ r, c ] )
@@ -52,15 +50,17 @@ class Solution :
             # downRight
             if ( r < self.rows and c < self.cols ) and self.DFS( r+1, c+1, word[1:] ) : return 1
 
+            self.traveled.pop( -1 )
             return 0
         
         else :
+            self.traveled.pop( -1 )
             return 0
            
     def findWordsInBoggle( self, words ) :     
      
         wordsFoundCount = 0
-        for word in possibleWords :
+        for word in words :
                     
             passed = [ letter for letter in word if letter not in self.lettersDict ]
             
