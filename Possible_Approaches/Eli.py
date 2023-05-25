@@ -23,6 +23,13 @@ class Solution :
     # @cache
     def DFS( self, r, c, word ) :
         
+        if [ r, c ] in self.traveled :
+            # print('CROSSOVER')
+            # print( self.traveled )
+            return 0
+        else :
+            self.traveled.append( [ r, c ] )
+        
         if self.board[ r ][ c ] == word[ 0 ] :        
             if len( word ) == 1 :
                 return 1
@@ -61,26 +68,39 @@ class Solution :
                 
                 for pos in self.lettersDict[ word[ 0 ] ] :
                     
+                    self.traveled = []
+                    
                     if self.DFS( pos[ 0 ], pos[ 1 ], word ) :
+                        # print( f'Found: {word} @ {pos} with {self.traveled}' )
                         wordsFoundCount += 1
                         break
         
         return wordsFoundCount
 
-
+print()
 timeStart = time.time()
 rangeMin = 5
 rangeMax = 100
+repeatEach = 5
 for i in range( rangeMin, rangeMax ) :
     
-    for _ in range( 1 ) :
+    for _ in range( repeatEach ) :
         startT = time.time()
         
         S = Solution()
         S.createBoard( i, i )
+        # [ print( row ) for row in S.board ]
+        # print()
+        
         S.createLetterDict()
+        # [ print( item ) for item in S.lettersDict.items() ]
+        # print()
+        
         count = S.findWordsInBoggle( possibleWords )
         
-        print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
+        if count :
+            # [ print( row ) for row in S.board ]
+            # print()
+            print( f'For Board Size {i}x{i}\nFound {count}/{n} words in {time.time() - startT:.5f} seconds\n')
 
-print( f'Boards for size {rangeMin}..{rangeMax} using {n} words completed in {time.time() - timeStart} seconds')
+print( f'Boards for size {rangeMin}..{rangeMax} done {repeatEach}x times using {n} words completed in {time.time() - timeStart} seconds')
