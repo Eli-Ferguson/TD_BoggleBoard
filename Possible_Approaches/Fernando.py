@@ -1,40 +1,40 @@
 import random
 import time
 
-directionX = [0, 1, 0, -1, 1, 1, -1, -1]
-directionY = [1, 0, -1, 0, 1, -1, 1, -1]
+directionRow = [0, 1, 0, -1, 1, 1, -1, -1]
+directionCol = [1, 0, -1, 0, 1, -1, 1, -1]
 allWords = []
 N = 0
 board = []
+dict = {}
 
 
 class Solution_BruteForce:
 
     # Perform an exhaustive dfs looking for the word
-    def DFS(self, word, i, j, wordIdx):
-        if self.outBounds(i, j):
+    def DFS(self, word, row, col, wordIdx):
+        if outBounds(row, col):
             return False
 
         if wordIdx == len(word):
             return True
 
-        if word[wordIdx] != board[i][j]:
+        if word[wordIdx] != board[row][col]:
             return False
 
-        for k in range(0, len(directionX)):
-            if self.DFS(word, i+k, j+k, wordIdx+1):
+        for k in range(0, len(directionRow)):
+            newRow = row+directionRow[k]
+            newCol = col+directionCol[k]
+            if self.DFS(word, newRow, newCol, wordIdx+1):
                 return True
 
         return False
 
-    def outBounds(self, i, j):
-        return i < 0 or j < 0 or i >= N or j >= N
-
 
 # TODO - Optimized Solution
 class Solution_Optimized:
-    def DFS(word, i, j, wordIdx):
-        return
+    def DFS(self, word, i, j, wordIdx):
+        return False
 
 
 def findStartingPositions(letter):
@@ -46,6 +46,10 @@ def findStartingPositions(letter):
     return positions
 
 
+def outBounds(i, j):
+    return i < 0 or j < 0 or i >= N or j >= N
+
+
 def setUp():
     # Read words
     file = open('./words.txt', 'r')
@@ -53,11 +57,23 @@ def setUp():
         word = line.strip().lower()
         allWords.append(word)
 
-    global N
+    global N, board, dict
     N = random.randint(100, 250)
-    global board
-    board = [[chr(random.randrange(97, 122)) for i in range(0, N)]
+    board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
              for j in range(0, N)]
+
+    # Set up dictionary for fast lookups for optimized approach
+    for row in range(0, N):
+        for col in range(0, N):
+            dict[(row, col)] = {}
+            for k in range(0, len(directionRow)):
+                newRow = row+directionRow[k]
+                newCol = col+directionCol[k]
+                if not outBounds(newRow, newCol):
+                    if board[newRow][newCol] not in dict[(row, col)]:
+                        dict[(row, col)][board[newRow][newCol]] = []
+                    dict[(row, col)][board[newRow][newCol]
+                                     ].append((newRow, newCol))
 
 
 def run_SolutionBruteForce():
