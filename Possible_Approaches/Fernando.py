@@ -4,9 +4,8 @@ import time
 directionRow = [0, 1, 0, -1, 1, 1, -1, -1]
 directionCol = [1, 0, -1, 0, 1, -1, 1, -1]
 allWords = []
-N = random.randint(10, 10)
-board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
-         for j in range(0, N)]
+N = 0
+board = []
 dict = {}
 
 
@@ -61,12 +60,30 @@ def outBounds(i, j):
     return i < 0 or j < 0 or i >= N or j >= N
 
 
-def setUp():
-    # Read words
-    file = open('./words.txt', 'r')
-    for line in file.readlines():
-        word = line.strip().lower()
-        allWords.append(word)
+def run_SolutionBruteForce():
+    Sol_BF = Solution_BruteForce()
+    wordsFound = 0
+    startTime = time.time()
+
+    for word in allWords:
+        startingPositions = findStartingPositions(word[0])
+        if len(startingPositions) > 0:
+            for pos in startingPositions:
+                res = Sol_BF.DFS(word, pos[0], pos[1], 0)
+                if res:
+                    wordsFound += 1
+                    break
+
+    elaspedTime = time.time() - startTime
+    print(
+        f"Brute Force Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
+    print(f'Time elapsed: {elaspedTime: 0.3f}s')
+    return elaspedTime
+
+
+def run_SolutionOptimized():
+    Sol_Op = Solution_Optimized()
+    wordsFound = 0
 
     # Set up dictionary for fast lookups for optimized approach
     for row in range(0, N):
@@ -81,28 +98,6 @@ def setUp():
                     dict[(row, col)][board[newRow][newCol]
                                      ].append((newRow, newCol))
 
-
-def run_SolutionBruteForce():
-    Sol_BF = Solution_BruteForce()
-    wordsFound = 0
-    startTime = time.time()
-
-    for word in allWords:
-        startingPositions = findStartingPositions(word[0])
-        if len(startingPositions) > 0:
-            for pos in startingPositions:
-                res = Sol_BF.DFS(word, pos[0], pos[1], 0)
-                if res:
-                    wordsFound += 1
-                    break
-    print(
-        f"Brute Force Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
-    print(f'Time elapsed: {time.time() - startTime}s')
-
-
-def run_SolutionOptimized():
-    Sol_Op = Solution_Optimized()
-    wordsFound = 0
     startTime = time.time()
 
     for word in allWords:
@@ -113,12 +108,34 @@ def run_SolutionOptimized():
                 if res:
                     wordsFound += 1
                     break
+
+    elapsedTime = time.time() - startTime
     print(
         f"Optimized Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
-    print(f'Time elapsed: {time.time() - startTime}s')
+    print(f'Time elapsed: {elapsedTime:0.3f}s')
+    return elapsedTime
+
+
+def main():
+    # Read words
+    file = open('./words.txt', 'r')
+    for line in file.readlines():
+        word = line.strip().lower()
+        allWords.append(word)
+
+    # Test for varying board sizes
+    for i in range(25, 5000, 25):
+        global N, board
+        N = i
+        board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
+                 for j in range(0, N)]
+        time1 = run_SolutionBruteForce()
+        time2 = run_SolutionOptimized()
+        print(
+            f'Optimized version is {1/(time2/time1):0.3f}x faster than brute force')
+        print()
     return
 
 
-setUp()
-run_SolutionBruteForce()
-run_SolutionOptimized()
+if __name__ == '__main__':
+    main()
