@@ -4,8 +4,9 @@ import time
 directionRow = [0, 1, 0, -1, 1, 1, -1, -1]
 directionCol = [1, 0, -1, 0, 1, -1, 1, -1]
 allWords = []
-N = 0
-board = []
+N = random.randint(10, 10)
+board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
+         for j in range(0, N)]
 dict = {}
 
 
@@ -33,7 +34,17 @@ class Solution_BruteForce:
 
 # TODO - Optimized Solution
 class Solution_Optimized:
-    def DFS(self, word, i, j, wordIdx):
+    def DFS(self, word, row, col, wordIdx):
+        if wordIdx == len(word)-1:
+            return True
+
+        if word[wordIdx+1] not in dict[(row, col)]:
+            return False
+
+        for position in dict[(row, col)][word[wordIdx+1]]:
+            if self.DFS(word, position[0], position[1], wordIdx+1):
+                return True
+
         return False
 
 
@@ -57,11 +68,6 @@ def setUp():
         word = line.strip().lower()
         allWords.append(word)
 
-    global N, board, dict
-    N = random.randint(100, 250)
-    board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
-             for j in range(0, N)]
-
     # Set up dictionary for fast lookups for optimized approach
     for row in range(0, N):
         for col in range(0, N):
@@ -77,14 +83,11 @@ def setUp():
 
 
 def run_SolutionBruteForce():
-    setUp()
     Sol_BF = Solution_BruteForce()
     wordsFound = 0
     startTime = time.time()
 
     for word in allWords:
-        # For brute force we search the entire grid to know where to start, there can be multiple
-        # starting positions
         startingPositions = findStartingPositions(word[0])
         if len(startingPositions) > 0:
             for pos in startingPositions:
@@ -97,4 +100,25 @@ def run_SolutionBruteForce():
     print(f'Time elapsed: {time.time() - startTime}s')
 
 
+def run_SolutionOptimized():
+    Sol_Op = Solution_Optimized()
+    wordsFound = 0
+    startTime = time.time()
+
+    for word in allWords:
+        startingPositions = findStartingPositions(word[0])
+        if len(startingPositions) > 0:
+            for pos in startingPositions:
+                res = Sol_Op.DFS(word, pos[0], pos[1], 0)
+                if res:
+                    wordsFound += 1
+                    break
+    print(
+        f"Optimized Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
+    print(f'Time elapsed: {time.time() - startTime}s')
+    return
+
+
+setUp()
 run_SolutionBruteForce()
+run_SolutionOptimized()
