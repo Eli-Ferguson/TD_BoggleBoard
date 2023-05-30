@@ -1,19 +1,20 @@
 import random
 import time
+import json
 
 directionRow = [0, 1, 0, -1, 1, 1, -1, -1]
 directionCol = [1, 0, -1, 0, 1, -1, 1, -1]
 allWords = []
-N = 0
-board = []
+boards = []
 dict = {}
+MAX_BOARD_WIDTH = 250
 
 
 class Solution_BruteForce:
 
     # Perform an exhaustive dfs looking for the word
-    def DFS(self, word, row, col, wordIdx):
-        if outBounds(row, col):
+    def DFS(self, board, word, row, col, wordIdx):
+        if outBounds(board, row, col):
             return False
 
         if wordIdx == len(word):
@@ -25,15 +26,14 @@ class Solution_BruteForce:
         for k in range(0, len(directionRow)):
             newRow = row+directionRow[k]
             newCol = col+directionCol[k]
-            if self.DFS(word, newRow, newCol, wordIdx+1):
+            if self.DFS(board, word, newRow, newCol, wordIdx+1):
                 return True
 
         return False
 
 
-# TODO - Optimized Solution
 class Solution_Optimized:
-    def DFS(self, word, row, col, wordIdx):
+    def DFS(self, board, word, row, col, wordIdx):
         if wordIdx == len(word)-1:
             return True
 
@@ -41,58 +41,57 @@ class Solution_Optimized:
             return False
 
         for position in dict[(row, col)][word[wordIdx+1]]:
-            if self.DFS(word, position[0], position[1], wordIdx+1):
+            if self.DFS(board, word, position[0], position[1], wordIdx+1):
                 return True
 
         return False
 
 
-def findStartingPositions(letter):
+def findStartingPositions(board, letter):
     positions = []
-    for i in range(0, N):
-        for j in range(0, N):
+    for i in range(0, len(board)):
+        for j in range(0, len(board[0])):
             if (board[i][j] == letter):
                 positions.append((i, j))
     return positions
 
 
-def outBounds(i, j):
-    return i < 0 or j < 0 or i >= N or j >= N
+def outBounds(board, i, j):
+    return i < 0 or j < 0 or i >= len(board) or j >= len(board[0])
 
 
-def run_SolutionBruteForce():
+def run_BruteForce(board):
     Sol_BF = Solution_BruteForce()
     wordsFound = 0
     startTime = time.time()
 
     for word in allWords:
-        startingPositions = findStartingPositions(word[0])
+        startingPositions = findStartingPositions(board, word[0])
         if len(startingPositions) > 0:
             for pos in startingPositions:
-                res = Sol_BF.DFS(word, pos[0], pos[1], 0)
+                res = Sol_BF.DFS(board, word, pos[0], pos[1], 0)
                 if res:
                     wordsFound += 1
                     break
 
     elaspedTime = time.time() - startTime
     print(
-        f"Brute Force Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
-    print(f'Time elapsed: {elaspedTime: 0.3f}s')
-    return elaspedTime
+        f"Brute Force Approach: {wordsFound}/{len(allWords)} words found. Time elapsed: {elaspedTime: 0.3f}s")
+    return elaspedTime, wordsFound
 
 
-def run_SolutionOptimized():
+def run_Optimized(board):
     Sol_Op = Solution_Optimized()
     wordsFound = 0
 
     # Set up dictionary for fast lookups for optimized approach
-    for row in range(0, N):
-        for col in range(0, N):
+    for row in range(0, len(board)):
+        for col in range(0, len(board[0])):
             dict[(row, col)] = {}
             for k in range(0, len(directionRow)):
                 newRow = row+directionRow[k]
                 newCol = col+directionCol[k]
-                if not outBounds(newRow, newCol):
+                if not outBounds(board, newRow, newCol):
                     if board[newRow][newCol] not in dict[(row, col)]:
                         dict[(row, col)][board[newRow][newCol]] = []
                     dict[(row, col)][board[newRow][newCol]
@@ -101,38 +100,59 @@ def run_SolutionOptimized():
     startTime = time.time()
 
     for word in allWords:
-        startingPositions = findStartingPositions(word[0])
+        startingPositions = findStartingPositions(board, word[0])
         if len(startingPositions) > 0:
             for pos in startingPositions:
-                res = Sol_Op.DFS(word, pos[0], pos[1], 0)
+                res = Sol_Op.DFS(board, word, pos[0], pos[1], 0)
                 if res:
                     wordsFound += 1
                     break
 
     elapsedTime = time.time() - startTime
     print(
-        f"Optimized Approach: {wordsFound}/{len(allWords)} words found. Board size: {N}x{N}.")
-    print(f'Time elapsed: {elapsedTime:0.3f}s')
-    return elapsedTime
+        f"Optimized Approach: {wordsFound}/{len(allWords)} words found. Time elapsed: {elapsedTime:0.3f}s")
+    return elapsedTime, wordsFound
+
+
+def generateBoards(numBoards):
+    print("Generating boggle boards...")
+    for i in range(0, numBoards):
+        N = random.randrange(5, MAX_BOARD_WIDTH)  # boards of varying lengths
+        board = [[chr(random.randrange(97, 123)) for _ in range(0, N)]
+                 for _ in range(0, N)]
+        boards.append(board)
+        print(f"Generated board {i}, {N}x{N}")
+    print()
+    return boards
+
+def readInBoards(path: str):
+    with open(path, 'r') as f:
+        input = json.load(f)
+        for board in input['boards']:
+            boards.append(board)
+    return
+
+def readInWords(path: str):
+    # Read words  
+    with open(path, 'r') as f:
+        for line in f.readlines():
+          word = line.strip().lower()
+          allWords.append(word)
+          
+    return
 
 
 def main():
-    # Read words
-    file = open('./words.txt', 'r')
-    for line in file.readlines():
-        word = line.strip().lower()
-        allWords.append(word)
-
-    # Test for varying board sizes
-    for i in range(25, 5000, 25):
-        global N, board
-        N = i
-        board = [[chr(random.randrange(97, 123)) for i in range(0, N)]
-                 for j in range(0, N)]
-        time1 = run_SolutionBruteForce()
-        time2 = run_SolutionOptimized()
+    readInWords('./words.txt')
+    generateBoards(10)
+    for i in range(0, len(boards)):
+        board = boards[i]
+        print(f"Solving Board {i}, {len(board)}x{len(board[0])}...")
+        result1 = run_BruteForce(board)
+        result2 = run_Optimized(board)
+        dict.clear()
         print(
-            f'Optimized version is {1/(time2/time1):0.3f}x faster than brute force')
+            f'Optimized version is {1/(result2[0]/result1[0]):0.3f}x faster than brute force')
         print()
     return
 
