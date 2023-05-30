@@ -24,7 +24,7 @@ class TestSolution(unittest.TestCase):
             self.assertEqual(self.BOARD_ANSWERS[i], result[1])
         return
 
-def readInBoardAnswers(path):
+def readInBoardAnswers(path: str):
     answers = []
     with open(path, 'r') as f:
         input = json.load(f)

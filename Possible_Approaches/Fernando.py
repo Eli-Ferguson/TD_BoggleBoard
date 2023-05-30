@@ -1,19 +1,20 @@
 import random
 import time
 import json
+from typing import List, Tuple, Dict
 
-directionRow = [0, 1, 0, -1, 1, 1, -1, -1]
-directionCol = [1, 0, -1, 0, 1, -1, 1, -1]
-allWords = []
-boards = []
-dict = {}
+BoggleBoard = List[List[str]]
+
+directionRow: List[int] = [0, 1, 0, -1, 1, 1, -1, -1]
+directionCol: List[int] = [1, 0, -1, 0, 1, -1, 1, -1]
+allWords: List[str] = []
+boards: List[BoggleBoard] = []
+dict: Dict[Tuple[int, int], Dict[str, List[Tuple[int, int]]]] = {}
 MAX_BOARD_WIDTH = 250
 
 
 class Solution_BruteForce:
-
-    # Perform an exhaustive dfs looking for the word
-    def DFS(self, board, word, row, col, wordIdx):
+    def DFS(self, board: BoggleBoard, word: str, row: int, col: int, wordIdx: int):
         if outBounds(board, row, col):
             return False
 
@@ -33,7 +34,7 @@ class Solution_BruteForce:
 
 
 class Solution_Optimized:
-    def DFS(self, board, word, row, col, wordIdx):
+    def DFS(self, board: BoggleBoard, word: int, row: int, col: int, wordIdx: int):
         if wordIdx == len(word)-1:
             return True
 
@@ -47,7 +48,14 @@ class Solution_Optimized:
         return False
 
 
-def findStartingPositions(board, letter):
+def findStartingPositions(board: BoggleBoard, letter: str):
+    """
+    Used to find all positions where a letter exists in order to start the DFS search
+
+    :param board: The BoggleBoard being solved
+    :param letter: The first letter of the word being searched for
+    """
+
     positions = []
     for i in range(0, len(board)):
         for j in range(0, len(board[0])):
@@ -56,11 +64,17 @@ def findStartingPositions(board, letter):
     return positions
 
 
-def outBounds(board, i, j):
+def outBounds(board: BoggleBoard, i: int, j: int):
     return i < 0 or j < 0 or i >= len(board) or j >= len(board[0])
 
 
-def run_BruteForce(board):
+def run_BruteForce(board: BoggleBoard):
+    """
+    Run brute force implementation of Boggle
+
+    :param board: The BoggleBoard being solved
+    """
+
     Sol_BF = Solution_BruteForce()
     wordsFound = 0
     startTime = time.time()
@@ -80,7 +94,12 @@ def run_BruteForce(board):
     return elaspedTime, wordsFound
 
 
-def run_Optimized(board):
+def run_Optimized(board: BoggleBoard):
+    """
+    Run optimized implementation of Boggle
+
+    :param board: The BoggleBoard being solved
+    """
     Sol_Op = Solution_Optimized()
     wordsFound = 0
 
@@ -114,7 +133,13 @@ def run_Optimized(board):
     return elapsedTime, wordsFound
 
 
-def generateBoards(numBoards):
+def generateBoards(numBoards: int):
+    """
+    Generates a set of numBoards number of boggleboards with random letters
+
+    :param numBoards: Number of boggleboards to generate
+    """
+
     print("Generating boggle boards...")
     for i in range(0, numBoards):
         N = random.randrange(5, MAX_BOARD_WIDTH)  # boards of varying lengths
@@ -125,20 +150,31 @@ def generateBoards(numBoards):
     print()
     return boards
 
+
 def readInBoards(path: str):
+    """
+    Reads in a set of boggleboards
+
+    :param path: Path to json file containing the board input
+    """
     with open(path, 'r') as f:
         input = json.load(f)
         for board in input['boards']:
             boards.append(board)
     return
 
+
 def readInWords(path: str):
-    # Read words  
+    """
+    Reads in a set of words to use as the word bank for Boggle
+
+    :param path: Path to json file containing the words
+    """
+
     with open(path, 'r') as f:
         for line in f.readlines():
-          word = line.strip().lower()
-          allWords.append(word)
-          
+            word = line.strip().lower()
+            allWords.append(word)
     return
 
 
