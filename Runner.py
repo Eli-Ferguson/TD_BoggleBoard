@@ -11,11 +11,7 @@ if __name__ == '__main__' :
     BP = BoggleProblem( words_file=wordsFile, board_file=BoardsFile )
     
     # Create and set params
-    S = Solution()
-    S.rows = len( BP.board )-1
-    S.cols = len( BP.board[0] )-1
-    S.letterDict = BP.letter_dict
-    S.board = BP.board
+    S = Solution( board=BP.board, letterDict=BP.letter_dict )
     
     # Find Solutions
     print( f'Words Found: {S.findWordsInBoggle( BP.words )}' )

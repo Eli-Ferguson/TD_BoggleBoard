@@ -2,10 +2,13 @@ from collections import defaultdict
 
 class Solution :
     
-    rows = 0
-    cols = 0
-    letterDict = {}
-    board = [[]]
+    def __init__( self, board, letterDict ) :
+        
+        self.board = board
+        self.letterDict = letterDict
+
+        self.rows = len( self.board )-1
+        self.cols = len( self.board[ 0 ] )-1
     
     def DFS( self, r, c, word ) :
                 
