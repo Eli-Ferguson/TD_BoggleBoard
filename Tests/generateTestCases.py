@@ -6,36 +6,34 @@ import os
 sys.path.append(os.path.abspath(
     os.getcwd() + '/../Possible_Approaches/'))
 
-import Fernando as Solution_Fernando
-
-
-NUM_TESTCASES_FERNANDO = 10  # used as the number of boards created
-Solution_Fernando.MAX_BOARD_WIDTH = 100  # Default is 250
+from Fernando import Solution
 
 
 def generateTestCases_Fernando():
-    data = {}
-    data['boards'] = []
-    data['answers'] = []
+    dataBoards = {}
+    dataAnswers = {}
+    dataBoards['boards'] = []
+    dataAnswers['answers'] = []
 
-    Solution_Fernando.readInWords('../Possible_Approaches/words.txt')
-    Solution_Fernando.generateBoards(NUM_TESTCASES_FERNANDO)
+    S = Solution(None, '../Possible_Approaches/words.txt')
 
-    for i in range(0, NUM_TESTCASES_FERNANDO):
-        board = Solution_Fernando.boards[i]
-        data['boards'].append(board)
-        result1 = Solution_Fernando.run_BruteForce(board)
-        data['answers'].append(result1[1])
-        Solution_Fernando.dict.clear()
+    for i in range(0, len(S.boards)):
+        board = S.boards[i]
+        dataBoards['boards'].append(board)
+        result1 = S.runBruteForce(board)
+        dataAnswers['answers'].append(result1[1])
 
-    with open('tests_Fernando.json', 'w') as f:
-        json.dump(data, f)
+    with open('../boards.json', 'w') as f:
+        json.dump(dataBoards, f)
+    with open('../answers.json', 'w') as f:
+        json.dump(dataAnswers, f)
     return
 
 
 def main():
     generateTestCases_Fernando()
     return
+
 
 if __name__ == '__main__':
     main()
