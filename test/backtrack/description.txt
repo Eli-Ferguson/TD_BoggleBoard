@@ -1,0 +1,1 @@
+Tests whether the program correctly disregards backtracked solutions, and whether it finds a correct solution even in the presence of a backtrackable one.

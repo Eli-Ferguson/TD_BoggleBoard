@@ -1,0 +1,1 @@
+Tests whether the program can detect words going in the four basic directions, as well as some diagonals using a grid of numbers.

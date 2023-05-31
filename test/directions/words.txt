@@ -1,0 +1,17 @@
+left
+right
+down
+up
+159
+951
+753
+357
+157
+751
+359
+953
+153
+351
+759
+957
+definitely_not_here
