@@ -72,7 +72,7 @@ class EliSolution(SolutionBase):
             self.traveled.pop(-1)
             return 0
 
-        else: # This wasn't the next letter in the word
+        else:  # This wasn't the next letter in the word
             self.traveled.pop(-1)
             return 0
 
