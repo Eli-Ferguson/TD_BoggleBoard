@@ -5,6 +5,7 @@ class Solution :
     rows = 0
     cols = 0
     letterDict = {}
+    board = [[]]
     
     def DFS( self, r, c, word ) :
                 

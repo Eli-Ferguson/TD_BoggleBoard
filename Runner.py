@@ -15,6 +15,7 @@ if __name__ == '__main__' :
     S.rows = len( BP.board )-1
     S.cols = len( BP.board[0] )-1
     S.letterDict = BP.letter_dict
+    S.board = BP.board
     
     # Find Solutions
     print( f'Words Found: {S.findWordsInBoggle( BP.words )}' )
