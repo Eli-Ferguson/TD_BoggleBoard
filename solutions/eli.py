@@ -17,12 +17,13 @@ class EliSolution(SolutionBase):
 
         # Initialize solutions-specific variables
         self.letters_dict = defaultdict(list)
-        for y, row in enumerate(self.board):
-            for x, letter in enumerate(row):
-                self.letters_dict[letter].append([y, x])
+        for i in range(len(self.board)):
+            for j in range(len(self.board[0])):
+                letter = self.board[i][j]
+                self.letters_dict[letter].append([i,j])
 
-        self.rows = len(self.board)
-        self.cols = len(self.board[0])
+        self.rows = len(self.board) - 1
+        self.cols = len(self.board[0]) - 1
         self.traveled = []
 
     def dfs(self, r: int, c: int, word: str) -> int:
