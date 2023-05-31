@@ -1,12 +1,11 @@
 
+import Fernando as Solution_Fernando
 import sys
 import json
 import os
 
 sys.path.append(os.path.abspath(
     os.getcwd() + '/../Possible_Approaches/'))
-
-import Fernando as Solution_Fernando
 
 
 NUM_TESTCASES_FERNANDO = 10  # used as the number of boards created
@@ -36,6 +35,7 @@ def generateTestCases_Fernando():
 def main():
     generateTestCases_Fernando()
     return
+
 
 if __name__ == '__main__':
     main()

@@ -14,37 +14,42 @@ MAX_BOARD_WIDTH = 250
 
 
 class Solution_BruteForce:
-    def DFS(self, board: BoggleBoard, word: str, row: int, col: int, wordIdx: int):
-        if outBounds(board, row, col):
-            return False
-
+    def DFS(self, board: BoggleBoard, word: str, row: int, col: int, wordIdx: int, visited: List[List[bool]]):
         if wordIdx == len(word):
             return True
 
-        if word[wordIdx] != board[row][col]:
+        if outBounds(board, row, col) or (word[wordIdx] != board[row][col]) or visited[row][col]:
             return False
+
+        visited[row][col] = True
 
         for k in range(0, len(directionRow)):
             newRow = row+directionRow[k]
             newCol = col+directionCol[k]
-            if self.DFS(board, word, newRow, newCol, wordIdx+1):
+            if self.DFS(board, word, newRow, newCol, wordIdx+1, visited):
                 return True
+
+        visited[row][col] = False
 
         return False
 
 
 class Solution_Optimized:
-    def DFS(self, board: BoggleBoard, word: int, row: int, col: int, wordIdx: int):
+    def DFS(self, board: BoggleBoard, word: int, row: int, col: int, wordIdx: int, visited: List[List[bool]]):
+
         if wordIdx == len(word)-1:
             return True
 
-        if word[wordIdx+1] not in dict[(row, col)]:
+        if visited[row][col] or (word[wordIdx+1] not in dict[(row, col)]):
             return False
 
+        visited[row][col] = True
+
         for position in dict[(row, col)][word[wordIdx+1]]:
-            if self.DFS(board, word, position[0], position[1], wordIdx+1):
+            if self.DFS(board, word, position[0], position[1], wordIdx+1, visited):
                 return True
 
+        visited[row][col] = False
         return False
 
 
@@ -83,7 +88,8 @@ def run_BruteForce(board: BoggleBoard):
         startingPositions = findStartingPositions(board, word[0])
         if len(startingPositions) > 0:
             for pos in startingPositions:
-                res = Sol_BF.DFS(board, word, pos[0], pos[1], 0)
+                visited = [[False]*len(board)]*len(board)
+                res = Sol_BF.DFS(board, word, pos[0], pos[1], 0, visited)
                 if res:
                     wordsFound += 1
                     break
@@ -122,7 +128,8 @@ def run_Optimized(board: BoggleBoard):
         startingPositions = findStartingPositions(board, word[0])
         if len(startingPositions) > 0:
             for pos in startingPositions:
-                res = Sol_Op.DFS(board, word, pos[0], pos[1], 0)
+                visited = [[False]*len(board)]*len(board)
+                res = Sol_Op.DFS(board, word, pos[0], pos[1], 0, visited)
                 if res:
                     wordsFound += 1
                     break
