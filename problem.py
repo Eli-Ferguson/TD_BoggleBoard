@@ -1,14 +1,15 @@
 import json
 from collections import defaultdict
-from typing import List
+from typing import List, Optional
 
 
 class BoggleProblem:
     _words: List[str]
     _boards: List[List[List[str]]]
+    _answers: Optional[List[List[str]]]
     multi_board: bool
 
-    def __init__(self, words_file: str, board_file: str, multi_board: bool = False) -> None:
+    def __init__(self, words_file: str, board_file: str, answers_file: str = None, multi_board: bool = False) -> None:
         """
         Represents the state of a single Boggle problem, including the list of words to search for and the board layout
 
@@ -35,6 +36,14 @@ class BoggleProblem:
                 data = [data]
 
             self._boards = data
+
+            if answers_file:
+                with open(answers_file) as af:
+                    data = json.load(af)
+                    self._answers = data
+            else:
+                self._answers = None
+
             self.multi_board = multi_board
 
     @property
@@ -47,6 +56,13 @@ class BoggleProblem:
     @property
     def boards(self) -> List[List[List[str]]]:
         """
-        A 2d list of characters representing the Boggle board
+        A 3d list of characters representing the Boggle boards
         """
         return self._boards
+
+    @property
+    def answers(self) -> Optional[List[List[str]]]:
+        """
+        Optional, A 2d list of strings representing the words to be found in each board
+        """
+        return self._answers
